@@ -11,5 +11,5 @@
     },
     "JWT_SECRET": "JWT_SECRET_KEY",
     "JWT_EXPIRE_TIME": "15m",
-    "SALT": "SALT_TO_HASH_PASSWORD"
+    "SALT": 10
 }
