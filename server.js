@@ -17,7 +17,6 @@ routes.forEach((item) => {
     app.use(item.path, item.route)
 })
 
-app.set('port', config.server.port)
-app.listen(() => {
+app.listen(config.server.port, () => {
     console.log('Listening on ', config.server.port)
 })
