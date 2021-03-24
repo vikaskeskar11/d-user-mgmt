@@ -3,27 +3,34 @@ const config = require('config')
 
 class Connection {
     async connect() {
-        try {
-            console.log('Connection:connect: Making connection with DB ')
-            const user = config.db.user
-            const password = config.db.password
-            const host = config.db.host
-            const port = config.db.port
-            if (user && password) {
-                await mongoose
-                    .connect(`mongodb://${user}:${password}@${host}:${port}/admin`)
-            } else {
-                await mongoose
-                    .connect(`mongodb://${host}:${port}/admin`)
-            }
-            console.log('Connection:connect: Connected to DB ')
-        } catch (error) {
-            console.log('Connection:connect: Error ', { message: error.message })
-            // If failed to connect, retry after some time
-            setTimeout(() => {
-                this.connect()
-            }, 5000)
+        console.log('Connection:connect: Making connection with DB ')
+        const user = config.db.user
+        const password = config.db.password
+        const host = config.db.host
+        const port = config.db.port
+        const name = config.db.name
+        let url = `mongodb://${host}:${port}/${name}?authSource=admin`
+        if (user && password) {
+            url = `mongodb://${user}:${password}@${host}:${port}/${name}?authSource=admin`
         }
+        mongoose.connect(url, {
+            useFindAndModify: true,
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useUnifiedTopology: true
+        })
+        mongoose.connection.on('error', function () {
+            console.log('Could not connect to MongoDB')
+        })
+        mongoose.connection.on('disconnected', function () {
+            console.log('Lost MongoDB connection!')
+        })
+        mongoose.connection.on('connected', function () {
+            console.log('Connection established to MongoDB')
+        })
+        mongoose.connection.on('reconnected', function () {
+            console.log('Reconnected to MongoDB')
+        })
     }
 }
 

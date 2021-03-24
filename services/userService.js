@@ -5,7 +5,7 @@ class UserService {
 
     async isUsernameExist(username) {
         console.debug('UserService:isUsernameExist: Checking for username ', { username })
-        const isExists = await UserModel.find({ username, markDelete: false }).countDocuments()
+        const isExists = await UserModel.find({ email: username, markDelete: false }).countDocuments()
         console.log('UserService:isUsernameExist: ', { isExists })
         return isExists
     }
@@ -24,7 +24,7 @@ class UserService {
 
     async verifyCredentials(data) {
         console.debug('UserService:verifyCredentials: Verifying credentials ')
-        const user = await UserModel.findOne({ username: new RegExp('^' + data.username + '$', 'i'), markDelete: false })
+        const user = await UserModel.findOne({ email: new RegExp('^' + data.username + '$', 'i'), markDelete: false })
         if (user) {
             const isMatch = await user.comparePassword(data.password, user.password)
             console.debug('UserService:verifyCredentials: ', { isMatch })
